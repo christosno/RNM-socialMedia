@@ -1,10 +1,11 @@
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View } from "react-native";
+import "./global.css";
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Text>Social Media</Text>
+      <Text className="text-2xl text-red-500 ">Social Media</Text>
       <StatusBar style="auto" />
     </View>
   );
