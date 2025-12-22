@@ -1,21 +1,19 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { FlatList, View } from "react-native";
 import "./global.css";
+import { FeedPostItem } from "./src/components/FeedPostItem";
+import dummyPosts from "./src/dummy/dummyPosts";
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text className="text-2xl text-red-500 ">Social Media</Text>
+    <View className="flex-1 justify-center bg-white dark:bg-black pt-24">
+      <FlatList
+        data={dummyPosts}
+        renderItem={({ item }) => <FeedPostItem post={item} />}
+        keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
+      />
       <StatusBar style="auto" />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-});
