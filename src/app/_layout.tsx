@@ -3,6 +3,8 @@ import "../../global.css";
 import React from "react";
 import { Stack } from "expo-router";
 import { ThemeProvider, DefaultTheme } from "@react-navigation/native";
+import { AuthProvider, useAuth } from "../providers/AuthProvider";
+import { ActivityIndicator } from "react-native";
 
 const CustomTheme = {
   ...DefaultTheme,
@@ -13,25 +15,36 @@ const CustomTheme = {
   },
 };
 
-export default function RootLayout() {
+function RootLayoutNav() {
+  const { session, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
   return (
     <ThemeProvider value={CustomTheme}>
       <Stack>
-        <Stack.Screen
-          name="index"
-          options={{
-            title: "Feed",
-            headerStyle: { backgroundColor: "#bfdbfe" },
-          }}
-        />
-        <Stack.Screen
-          name="post/[id]"
-          options={{
-            title: "Post",
-            headerStyle: { backgroundColor: "#bfdbfe" },
-          }}
-        />
+        <Stack.Protected guard={!!session}>
+          <Stack.Screen
+            name="(protected)"
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack.Protected>
+
+        <Stack.Protected guard={!session}>
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+        </Stack.Protected>
       </Stack>
     </ThemeProvider>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <AuthProvider>
+      <RootLayoutNav />
+    </AuthProvider>
   );
 }
