@@ -1,9 +1,11 @@
-import { View, Text } from "react-native";
+import { View, Text, Button } from "react-native";
+import { useAuth } from "../../../providers/AuthProvider";
 
 export default function ProfileScreen() {
+  const { logout } = useAuth();
   return (
     <View>
-      <Text>Profile</Text>
+      <Button title="Logout" onPress={logout} />
     </View>
   );
 }
