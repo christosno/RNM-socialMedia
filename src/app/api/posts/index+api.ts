@@ -1,6 +1,9 @@
 import dummyPosts from "../../../dummy/dummyPosts";
+import { neon } from "@neondatabase/serverless";
 
-export function GET(request: Request) {
+const sql = neon(process.env.NEON_DB_URL!);
+
+export async function GET(request: Request) {
   const posts = dummyPosts;
 
   return Response.json({ posts });
