@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 export default function App() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
   useEffect(() => {
     const fetchPosts = async () => {
       const response = await fetch("/api/posts");

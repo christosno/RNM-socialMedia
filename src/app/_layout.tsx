@@ -5,6 +5,10 @@ import { Stack } from "expo-router";
 import { ThemeProvider, DefaultTheme } from "@react-navigation/native";
 import { AuthProvider, useAuth } from "../providers/AuthProvider";
 import { ActivityIndicator } from "react-native";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useReactQueryDevTools } from '@dev-plugins/react-query';
+
+const queryClient = new QueryClient();
 
 const CustomTheme = {
   ...DefaultTheme,
@@ -16,12 +20,14 @@ const CustomTheme = {
 };
 
 function RootLayoutNav() {
+  useReactQueryDevTools(queryClient);
   const { session, isLoading } = useAuth();
 
   if (isLoading) {
     return <ActivityIndicator />;
   }
   return (
+    <QueryClientProvider client={queryClient}>
     <ThemeProvider value={CustomTheme}>
       <Stack>
         <Stack.Protected guard={!!session}>
@@ -38,6 +44,7 @@ function RootLayoutNav() {
         </Stack.Protected>
       </Stack>
     </ThemeProvider>
+    </QueryClientProvider>
   );
 }
 
