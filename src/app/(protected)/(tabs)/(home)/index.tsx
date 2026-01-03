@@ -10,7 +10,7 @@ import { getPosts } from "../../../../services/postService";
 export default function App() {
   const { session } = useAuth();
 
-  const { data: posts, isLoading, error, refetch, isRefetching } = useQuery({
+  const { data: posts, isLoading, error, refetch } = useQuery({
     queryKey: ["posts"],
     queryFn: () => getPosts(session?.accessToken!),
   });
@@ -34,7 +34,7 @@ export default function App() {
         )}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
-        refreshing={isRefetching}
+        refreshing={false}
         onRefresh={refetch}
       />
       <Link href="/new" asChild>

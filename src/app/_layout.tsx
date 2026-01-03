@@ -26,8 +26,8 @@ function RootLayoutNav() {
   if (isLoading) {
     return <ActivityIndicator />;
   }
-  return (
   
+  return (
     <ThemeProvider value={CustomTheme}>
       <Stack>
         <Stack.Protected guard={!!session}>

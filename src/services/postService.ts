@@ -44,4 +44,35 @@ export async function createPostRequest(post: CreatePostInput, token: string) {
     }
   
     return response.json();
-  }
+}
+
+
+export async function likePostRequest(id: number, token: string) {
+    const response = await fetch(`/api/posts/${id}/like`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  
+    if (!response.ok) {
+      throw new Error('Failed to like post');
+    }
+  
+    return await response.json();
+}
+  
+export async function unlikePostRequest(id: number, token: string) {
+    const response = await fetch(`/api/posts/${id}/like`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  
+    if (!response.ok) {
+      throw new Error('Failed to unlike post');
+    }
+  
+    return true;
+}
