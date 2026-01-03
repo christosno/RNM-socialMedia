@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         avatar:
           "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg",
       },
-      accessToken: "1234567890",
+      accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2MDUwOTIwLTg4MDMtNDMzYi1hZGYxLTg4Y2I0ZDNlYmZkMSIsImlhdCI6MTc2NzM2NTA0MiwiZXhwIjoxNzY5OTU3MDQyfQ.gonQGQLZh71WGL9ovFXRCOry4YDp0BI4Bnl44rcKNQY",
     };
     setSession(session);
     saveSession(session);

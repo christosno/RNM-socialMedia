@@ -1,17 +1,26 @@
 import { useLocalSearchParams } from "expo-router";
-import { View, Text } from "react-native";
-import dummyPosts from "../../../../../dummy/dummyPosts";
+import { View, Text, ActivityIndicator } from "react-native";
 import { FeedPostItem } from "../../../../../components/FeedPostItem";
+import { useAuth } from "../../../../../providers/AuthProvider";
+import { useQuery } from "@tanstack/react-query";
+import { getPost } from "../../../../../services/postService";
 
 export default function PostScreen() {
   const { id } = useLocalSearchParams();
-  const post = dummyPosts.find((post) => post.id === Number(id));
-  if (!post) {
-    return (
-      <View>
-        <Text>Post not found</Text>
-      </View>
-    );
+  const { session } = useAuth();
+  
+  const { data: post, isLoading, error } = useQuery({
+    queryKey: ["posts", id],
+    queryFn: () => getPost(id as string, session?.accessToken!),
+  });
+
+  if (isLoading) {
+    return <ActivityIndicator />;
   }
+
+  if (error) {
+    return <Text>Error: {error.message}</Text>;
+  }
+
   return <FeedPostItem post={post} />;
 }

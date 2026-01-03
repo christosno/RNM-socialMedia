@@ -1,24 +1,28 @@
-import { FlatList, Pressable } from "react-native";
+import { ActivityIndicator, FlatList, Pressable, Text } from "react-native";
 import { FeedPostItem } from "../../../../components/FeedPostItem";
-import dummyPosts from "../../../../dummy/dummyPosts";
 import { Link } from "expo-router";
 import { AntDesign } from "@expo/vector-icons";
-import { Post } from "../../../../types/models";
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "../../../../providers/AuthProvider";
+import { getPosts } from "../../../../services/postService";
+
 
 export default function App() {
-  const [posts, setPosts] = useState<Post[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const { session } = useAuth();
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const response = await fetch("/api/posts");
-      const data = await response.json();
-      console.log("🚀 ~ fetchPosts ~ data:", data);
-      setPosts(data.posts);
-    };
-    fetchPosts();
-  }, []);
+  const { data: posts, isLoading, error, refetch, isRefetching } = useQuery({
+    queryKey: ["posts"],
+    queryFn: () => getPosts(session?.accessToken!),
+  });
+
+  if (isLoading) {
+    return <ActivityIndicator />;
+  }
+
+  if (error) {
+    return <Text>Error: {error.message}</Text>;
+  }
+
   return (
     <>
       <FlatList
@@ -30,6 +34,8 @@ export default function App() {
         )}
         keyExtractor={(item) => item.id.toString()}
         showsVerticalScrollIndicator={false}
+        refreshing={isRefetching}
+        onRefresh={refetch}
       />
       <Link href="/new" asChild>
         <Pressable className="absolute right-5 bottom-5 bg-[#007AFF] rounded-full w-[60px] h-[60px] items-center justify-center shadow-lg">
