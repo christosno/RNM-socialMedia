@@ -28,3 +28,20 @@ export async function getPost(id: string, token: string) {
   
     return response.json();
   }
+
+type CreatePostInput = { content: string };
+export async function createPostRequest(post: CreatePostInput, token: string) {
+    const response = await fetch('/api/posts', {
+      method: 'POST',
+      body: JSON.stringify(post),
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  
+    if (!response.ok) {
+      throw new Error('Failed to create post');
+    }
+  
+    return response.json();
+  }

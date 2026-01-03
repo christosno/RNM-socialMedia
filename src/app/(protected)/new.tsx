@@ -1,15 +1,27 @@
 import { router, Stack } from "expo-router";
 import { useState } from "react";
-import { View, TextInput, Button, Text } from "react-native";
+import { View, TextInput, Button, Text, Alert } from "react-native";
+import { useAuth } from "../../providers/AuthProvider";
+import { createPostRequest } from "../../services/postService";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export default function NewPost() {
+  const { session } = useAuth();
   const [content, setContent] = useState("");
+  const queryClient = useQueryClient();
 
-  const handlePost = () => {
-    console.log(content);
-    setContent("");
-    router.back();
-  };
+  const { mutate: createPost, isPending } = useMutation({
+    mutationFn: () => createPostRequest({ content }, session?.accessToken!),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+      setContent("");
+      router.back();
+    },
+    onError: (error) => {
+      Alert.alert("Error", error.message);
+    },
+  });
+
 
   return (
     <View className="flex-1 p-4">
@@ -17,7 +29,7 @@ export default function NewPost() {
         options={{
           headerLeft: () => (
             <Text
-              className="text-lg font-bold text-blue-500"
+              className="text-lg font-bold text-blue-500 p-2"
               onPress={() => router.back()}
             >
               Cancel
@@ -26,9 +38,9 @@ export default function NewPost() {
           headerRight: () => (
             <Button
               color={content.trim().length === 0 ? "gray" : "blue"}
-              disabled={content.trim().length === 0}
+              disabled={content.trim().length === 0 || isPending}
               title="Post"
-              onPress={handlePost}
+              onPress={() => createPost()}
             />
           ),
         }}
