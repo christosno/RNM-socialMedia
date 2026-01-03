@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { User } from "../types/models";
 import * as SecureStore from "expo-secure-store";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { signInRequest } from "../services/authService";
 
 const SESSION_KEY = "session";
 
@@ -24,29 +26,27 @@ const AuthContext = createContext<{
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const queryClient = useQueryClient();
+  
+  const { mutate: login } = useMutation({
+    mutationFn: (handle: string) => signInRequest(handle),
+    onSuccess: (data) => {
+      setSession(data);
+      saveSession(data);
+    },
+    onError: (error) => {
+      console.error(error);
+    },
+  });
 
   useEffect(() => {
     loadSession();
   }, []);
 
-  const login = (handle: string) => {
-    const session = {
-      user: {
-        id: "1",
-        name: "John Doe",
-        handle: handle,
-        avatar:
-          "https://notjustdev-dummy.s3.us-east-2.amazonaws.com/avatars/zuck.jpeg",
-      },
-      accessToken: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjE2MDUwOTIwLTg4MDMtNDMzYi1hZGYxLTg4Y2I0ZDNlYmZkMSIsImlhdCI6MTc2NzM2NTA0MiwiZXhwIjoxNzY5OTU3MDQyfQ.gonQGQLZh71WGL9ovFXRCOry4YDp0BI4Bnl44rcKNQY",
-    };
-    setSession(session);
-    saveSession(session);
-  };
-
   const logout = () => {
     setSession(null);
     saveSession(null);
+    queryClient.clear();
   };
 
   const saveSession = async (value: Session | null) => {
@@ -64,7 +64,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } else {
       setSession(null);
     }
-
     setIsLoading(false);
   };
 

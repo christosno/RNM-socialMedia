@@ -27,7 +27,7 @@ function RootLayoutNav() {
     return <ActivityIndicator />;
   }
   return (
-    <QueryClientProvider client={queryClient}>
+  
     <ThemeProvider value={CustomTheme}>
       <Stack>
         <Stack.Protected guard={!!session}>
@@ -38,20 +38,20 @@ function RootLayoutNav() {
             }}
           />
         </Stack.Protected>
-
         <Stack.Protected guard={!session}>
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         </Stack.Protected>
       </Stack>
     </ThemeProvider>
-    </QueryClientProvider>
   );
 }
 
 export default function RootLayout() {
   return (
+    <QueryClientProvider client={queryClient}>
     <AuthProvider>
       <RootLayoutNav />
     </AuthProvider>
+    </QueryClientProvider>
   );
 }

@@ -1,10 +1,9 @@
-import { StatusBar } from "expo-status-bar";
 import { Button, Text, TextInput, View } from "react-native";
 import { useAuth } from "../../providers/AuthProvider";
 import { useState } from "react";
 
 export default function App() {
-  const { login } = useAuth();
+  const { login, isLoading } = useAuth();
   const [username, setUsername] = useState("");
 
   const handleLogin = () => {
@@ -22,7 +21,7 @@ export default function App() {
         onChangeText={setUsername}
         autoCapitalize="none"
       />
-      <Button title="Login" onPress={handleLogin} />
+      <Button title="Login" onPress={handleLogin} disabled={isLoading}  />
     </View>
   );
 }
