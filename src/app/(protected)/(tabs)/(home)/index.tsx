@@ -6,11 +6,13 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAuth } from "../../../../providers/AuthProvider";
 import { getPosts } from "../../../../services/postService";
 import { useRefreshOnFocus } from "../../../../hooks/tanstack";
+import { useIsFocused } from "@react-navigation/native";
 
 const QueryKey = ["posts"];
 
 export default function FeedScreen() {
   const { session } = useAuth();
+  const isFocused = useIsFocused();
 
   useRefreshOnFocus(QueryKey);
 
@@ -35,6 +37,7 @@ export default function FeedScreen() {
       };
     },
     initialPageParam: { limit: 20, cursor: undefined },
+    subscribed: isFocused,
   });
 
   if (isLoading) {
