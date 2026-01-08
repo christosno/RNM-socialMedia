@@ -5,10 +5,21 @@ import { Stack } from "expo-router";
 import { ThemeProvider, DefaultTheme } from "@react-navigation/native";
 import { AuthProvider, useAuth } from "../providers/AuthProvider";
 import { ActivityIndicator } from "react-native";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useReactQueryDevTools } from '@dev-plugins/react-query';
+import {
+  QueryClient,
+  QueryClientProvider,
+  onlineManager,
+} from "@tanstack/react-query";
+import { useReactQueryDevTools } from "@dev-plugins/react-query";
+import NetInfo from "@react-native-community/netinfo";
 
 const queryClient = new QueryClient();
+
+onlineManager.setEventListener((setOnline) => {
+  return NetInfo.addEventListener((state) => {
+    setOnline(!!state.isConnected);
+  });
+});
 
 const CustomTheme = {
   ...DefaultTheme,
@@ -26,7 +37,7 @@ function RootLayoutNav() {
   if (isLoading) {
     return <ActivityIndicator />;
   }
-  
+
   return (
     <ThemeProvider value={CustomTheme}>
       <Stack>
@@ -49,9 +60,9 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <RootLayoutNav />
-    </AuthProvider>
+      <AuthProvider>
+        <RootLayoutNav />
+      </AuthProvider>
     </QueryClientProvider>
   );
 }
