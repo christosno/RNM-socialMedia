@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useAuth } from "../providers/AuthProvider";
-import {useMutation, useQueryClient} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { likePostRequest, unlikePostRequest } from "../services/postService";
 
 dayjs.extend(relativeTime);
@@ -28,7 +28,7 @@ export function FeedPostItem({ post }: FeedPostItemProps) {
     mutationFn: () => unlikePostRequest(post.id, session?.accessToken!),
     onSettled: () => {
       return queryClient.invalidateQueries({ queryKey: ["posts"] });
-    }
+    },
   });
 
   return (
@@ -62,27 +62,31 @@ export function FeedPostItem({ post }: FeedPostItemProps) {
             <Text className="text-gray-500">{post.retweets_count}</Text>
           </View>
           {likePostMutation.isPending ? (
-              <View className="flex-row items-center gap-1">
+            <View className="flex-row items-center gap-1">
               <MaterialCommunityIcons
                 name={"heart"}
                 size={20}
-                color={ "crimson" }
+                color={"crimson"}
               />
               <Text className="text-gray-500">{post.likes_count + 1}</Text>
             </View>
-            ) : unlikePostMutation.isPending ? (
-              <View className="flex-row items-center gap-1">
+          ) : unlikePostMutation.isPending ? (
+            <View className="flex-row items-center gap-1">
               <MaterialCommunityIcons
                 name={"heart-outline"}
                 size={20}
-                color={ "grey" }
+                color={"grey"}
               />
-              <Text className="text-gray-500">{post.likes_count -1 }</Text>
+              <Text className="text-gray-500">{post.likes_count - 1}</Text>
             </View>
-            ) : (
-             <View className="flex-row items-center gap-1">
+          ) : (
+            <View className="flex-row items-center gap-1">
               <MaterialCommunityIcons
-                onPress={() => post.is_liked ? unlikePostMutation.mutate() : likePostMutation.mutate()}
+                onPress={() =>
+                  post.is_liked
+                    ? unlikePostMutation.mutate()
+                    : likePostMutation.mutate()
+                }
                 name={post.is_liked ? "heart" : "heart-outline"}
                 size={20}
                 color={post.is_liked ? "crimson" : "gray"}
