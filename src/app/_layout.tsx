@@ -1,13 +1,19 @@
 import "../../global.css";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Stack } from "expo-router";
 import { ThemeProvider, DefaultTheme } from "@react-navigation/native";
 import { AuthProvider, useAuth } from "../providers/AuthProvider";
-import { ActivityIndicator } from "react-native";
+import {
+  ActivityIndicator,
+  AppState,
+  AppStateStatus,
+  Platform,
+} from "react-native";
 import {
   QueryClient,
   QueryClientProvider,
+  focusManager,
   onlineManager,
 } from "@tanstack/react-query";
 import { useReactQueryDevTools } from "@dev-plugins/react-query";
@@ -58,6 +64,11 @@ function RootLayoutNav() {
 }
 
 export default function RootLayout() {
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", onAppStateChange);
+    return () => subscription.remove();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>
@@ -65,4 +76,10 @@ export default function RootLayout() {
       </AuthProvider>
     </QueryClientProvider>
   );
+}
+
+function onAppStateChange(status: AppStateStatus) {
+  if (Platform.OS !== "web") {
+    focusManager.setFocused(status === "active");
+  }
 }

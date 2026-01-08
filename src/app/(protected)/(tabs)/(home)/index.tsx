@@ -5,9 +5,14 @@ import { AntDesign } from "@expo/vector-icons";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useAuth } from "../../../../providers/AuthProvider";
 import { getPosts } from "../../../../services/postService";
+import { useRefreshOnFocus } from "../../../../hooks/tanstack";
+
+const QueryKey = ["posts"];
 
 export default function FeedScreen() {
   const { session } = useAuth();
+
+  useRefreshOnFocus(QueryKey);
 
   const {
     data: posts,
@@ -18,7 +23,7 @@ export default function FeedScreen() {
     hasNextPage,
     isFetchingNextPage,
   } = useInfiniteQuery({
-    queryKey: ["posts"],
+    queryKey: QueryKey,
     queryFn: ({ pageParam }) => getPosts(pageParam, session?.accessToken!),
     getNextPageParam: (lastPage) => {
       if (lastPage.length === 0) {
